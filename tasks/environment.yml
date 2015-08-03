@@ -1,0 +1,70 @@
+---
+- name: add group varda
+  group: name=varda state=present
+
+- name: add user varda
+  user: name=varda
+        group=varda
+        shell=/bin/bash
+        state=present
+
+- name: add .bashrc for user varda
+  template: src=bashrc
+            dest=/home/varda/.bashrc
+            owner=varda
+            group=varda
+
+- name: install packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - build-essential
+    - git
+    - netcat-openbsd
+    - python-dev
+    - python-virtualenv
+
+- name: create the varda directories
+  file: path=/opt/varda/{{ item }}
+        owner=varda
+        group=varda
+        state=directory
+  with_items:
+    - ''
+    - data
+    - genome
+    - versions
+    - src
+
+- name: checkout varda git repository
+  git: repo={{ varda_git_repository }}
+       dest=/opt/varda/src/varda
+       version={{ varda_git_branch }}
+       update=yes
+  sudo_user: varda
+  register: varda_code
+
+- name: checkout aule git repository
+  git: repo={{ varda_aule_git_repository }}
+       dest=/opt/varda/src/aule
+       version={{ varda_aule_git_branch }}
+       update=yes
+  sudo_user: varda
+
+- name: configure aule
+  template: src=aule.conf
+            dest=/opt/varda/src/aule/web/scripts/config.coffee
+            owner=varda
+            group=varda
+
+- name: copy ssl certificate
+  copy: src={{ varda_certificate}}
+        dest=/etc/ssl/certs/varda.crt
+  notify: reload nginx
+
+- name: copy ssl certificate key
+  copy: src={{ varda_certificate_key }}
+        dest=/etc/ssl/private/varda.key
+        owner=root
+        group=root
+        mode=0600
+  notify: reload nginx

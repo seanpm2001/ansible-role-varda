@@ -1,0 +1,17 @@
+[Unit]
+Description=Varda celery ({{ varda_current }})
+After=network.target
+
+[Service]
+ExecStart=/opt/varda/versions/{{ varda_current }}/virtualenv/bin/celery multi start $CELERYD_NODES -A ${CELERY_APP} --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} $CELERYD_OPTS
+ExecStop=/opt/varda/versions/{{ varda_current }}/virtualenv/bin/celery multi stopwait $CELERYD_NODES --pidfile=${CELERYD_PID_FILE}
+ExecReload=/opt/varda/versions/{{ varda_current }}/virtualenv/bin/celery multi restart $CELERYD_NODES -A ${CELERY_APP} --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} $CELERYD_OPTS
+Type=forking
+WorkingDirectory=/opt/varda/versions/{{ varda_current }}
+EnvironmentFile=-/opt/varda/versions/{{ varda_current }}/conf/celery.conf
+User=varda
+Group=varda
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

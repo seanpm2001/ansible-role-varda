@@ -1,0 +1,23 @@
+---
+varda_server_name: localhost
+
+varda_api_proxy_read_timeout: 60
+varda_api_worker_class: sync
+varda_api_workers: 2
+varda_api_timeout: 30
+
+varda_celery_max_tasks_per_child: 4
+varda_celery_concurrency: 3
+
+varda_max_upload_size: 1073741824  # 1GB
+varda_genome: null
+varda_genome_sha256sum: null
+varda_chromosome_aliases: []
+
+varda_prune_versions: true
+varda_unit_tests: false
+
+varda_git_repository: https://github.com/varda/varda.git
+varda_git_branch: master
+varda_aule_git_repository: https://github.com/varda/aule.git
+varda_aule_git_branch: master

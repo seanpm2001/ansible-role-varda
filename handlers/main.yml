@@ -1,0 +1,10 @@
+---
+- name: reload varda api
+  service: name=varda-api-{{ varda_current }} state=reloaded
+  # If a new version was just installed, we don't need to reload.
+  when: varda_current == varda_original
+
+- name: reload varda celery
+  service: name=varda-celery-{{ varda_current }} state=reloaded
+  # If a new version was just installed, we don't need to reload.
+  when: varda_current == varda_original

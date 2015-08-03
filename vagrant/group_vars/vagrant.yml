@@ -1,0 +1,17 @@
+---
+ansible_ssh_host: 127.0.0.1
+ansible_ssh_port: "{{ lookup('env', 'VARDA_PORT_FORWARD_SSH') | default(2524, true) }}"
+ansible_ssh_user: vagrant
+ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+
+exim_mailname: varda.local
+exim_mailtype: local
+
+varda_server_name: varda.local
+varda_certificate: "{{ inventory_dir }}/certificates/varda.crt"
+varda_certificate_key: "{{ inventory_dir }}/certificates/varda.key"
+varda_database_password: dummy_password_in_vagrant
+varda_admin_password: "$2a$12$U3C9cKrhyqLZVSh5QNj/v.CcVX0E.M/v69iyFox8o64BxzDLStHCa"
+
+varda_git_branch: master
+varda_aule_git_branch: master

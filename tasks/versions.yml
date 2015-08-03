@@ -1,0 +1,168 @@
+---
+- name: get original version
+  shell: 'basename $(readlink /opt/varda/versions/.current)'
+  ignore_errors: yes
+  changed_when: false
+  register: varda_original_command
+
+- name: store original version
+  set_fact: varda_original={{ varda_original_command.stdout }}
+
+- name: get current version
+  command: git rev-parse --short HEAD chdir=/opt/varda/src/varda
+  changed_when: false
+  register: varda_current_command
+
+- name: store current version
+  set_fact: varda_current={{ varda_current_command.stdout }}
+
+- name: create version directories
+  file: path=/opt/varda/versions/{{ varda_current }}/{{ item }}
+        owner=varda
+        group=varda
+        state=directory
+  with_items:
+    - ''
+    - conf
+    - log
+    - run
+
+- name: get all versions
+  shell: 'ls /opt/varda/versions | sort | cat'
+  changed_when: false
+  register: varda_versions_command
+
+- name: store all versions
+  set_fact:
+    varda_versions: "{{ varda_versions_command.stdout_lines }}"
+
+- name: configure varda
+  template: src=settings.py
+            dest=/opt/varda/versions/{{ varda_current }}/conf/settings.py
+            owner=varda
+            group=varda
+  notify:
+    - reload varda api
+    - reload varda celery
+
+- name: configure varda api
+  template: src=api.conf
+            dest=/opt/varda/versions/{{ varda_current }}/conf/api.conf.py
+            owner=varda
+            group=varda
+  notify: reload varda api
+
+- name: configure varda celery
+  template: src=celery.conf
+            dest=/opt/varda/versions/{{ varda_current }}/conf/celery.conf
+            owner=varda
+            group=varda
+  notify: reload varda celery
+
+- name: configure nginx for varda
+  template: src=nginx.conf
+            dest=/etc/nginx/sites-available/varda-{{ varda_current }}
+  notify: reload nginx
+
+- name: add varda api systemd service
+  template: src=api.service
+            dest=/etc/systemd/system/varda-api-{{ varda_current }}.service
+
+- name: add varda celery systemd service
+  template: src=celery.service
+            dest=/etc/systemd/system/varda-celery-{{ varda_current }}.service
+
+- name: install python ipython package
+  pip: name=ipython
+       virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
+       state=present
+  sudo_user: varda
+
+- name: install python psycopg2 package
+  pip: name=psycopg2
+       version=2.5.3
+       virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
+       state=present
+  sudo_user: varda
+
+- name: install python gunicorn package
+  pip: name=gunicorn
+       version=19.3.0
+       virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
+       state=present
+  sudo_user: varda
+
+- name: install python eventlet package
+  pip: name=eventlet
+       version=0.17.4
+       virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
+       state=present
+  sudo_user: varda
+  when: varda_api_worker_class == 'eventlet'
+
+- name: install python gevent package
+  pip: name=gevent
+       version=1.0.2
+       virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
+       state=present
+  sudo_user: varda
+  when: varda_api_worker_class == 'gevent'
+
+- include: install-version.yml
+  # In theory this should be safe to always run, but in practice we'd rather
+  # not hot-update the current version.
+  # Only a git repository update can make these tasks change anything, so we
+  # can limit them to that situation.
+  when: varda_current != varda_original
+
+- name: start varda api
+  service: name=varda-api-{{ varda_current }} state=started enabled=yes
+
+- name: wait for varda api to be available
+  wait_for: path=/opt/varda/versions/{{ varda_current }}/run/api.sock state=present timeout=60
+
+- name: test varda api
+  shell: "/bin/echo -e 'GET /api/ HTTP/1.0\\r\nHost: {{ varda_server_name }}\\r\n\\r\n' | nc -U /opt/varda/versions/{{ varda_current }}/run/api.sock"
+  changed_when: false
+  register: varda_test_api_command
+
+- fail: msg='testing varda api failed'
+  when: '"\"status\": \"ok\"" not in varda_test_api_command.stdout'
+
+- name: stop and disable old varda celerys
+  service: name=varda-celery-{{ item }} state=stopped enabled=no
+  with_items: varda_versions
+  when: item != varda_current
+
+- name: start varda celery
+  service: name=varda-celery-{{ varda_current }} state=started enabled=yes
+
+- name: save current version
+  file: path=/opt/varda/versions/.current
+        src=/opt/varda/versions/{{ varda_current }}
+        state=link
+
+- name: enable nginx configuration for varda
+  file: path=/etc/nginx/sites-enabled/varda
+        src=/etc/nginx/sites-available/varda-{{ varda_current }}
+        state=link
+
+- name: reload nginx
+  service: name=nginx state=reloaded
+  when: varda_current != varda_original
+
+# Gunicorn will finish current requests, but there may also be requests
+# pending (forwarded by nginx but not yet handled by Gunicorn), especially
+# with (a low number of) sync workers. These will not magically be
+# redirected to the new Gunicorn instance.
+# This request will be last in the pending queue, so when it is handled we
+# know the old Gunicorn instance can safely be stopped.
+- name: wait for pending requests on old api
+  shell: "/bin/echo -e 'GET /api/ HTTP/1.0\\r\nHost: {{ varda_server_name }}\\r\n\\r\n' | nc -U /opt/varda/versions/{{ varda_original }}/run/api.sock"
+  changed_when: false
+  when: varda_original and varda_current != varda_original
+
+- name: stop and disable old varda apis
+  service: name=varda-api-{{ item }} state=stopped enabled=no
+  with_items: varda_versions
+  when: item != varda_current

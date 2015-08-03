@@ -1,0 +1,5 @@
+---
+varda_certificate: "{{ inventory_dir }}/certificates/varda.crt"
+varda_certificate_key: "{{ inventory_dir }}/certificates/varda.key"
+varda_database_password: dummy_password_for_tests
+varda_admin_password: "$2a$12$U3C9cKrhyqLZVSh5QNj/v.CcVX0E.M/v69iyFox8o64BxzDLStHCa"

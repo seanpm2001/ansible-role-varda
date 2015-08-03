@@ -1,0 +1,11 @@
+---
+- include: environment.yml
+
+- include: genome.yml
+  # https://github.com/ansible/ansible/pull/9834
+  when: not not varda_genome
+
+- include: versions.yml
+
+- include: prune-versions.yml
+  when: varda_prune_versions

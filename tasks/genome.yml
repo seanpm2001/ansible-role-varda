@@ -1,0 +1,22 @@
+---
+- name: install python pip package
+  apt: pkg=python-pip state=present
+
+- name: install python fastools package
+  pip: name='git+https://git.lumc.nl/j.f.j.laros/fastools.git#egg=fastools'
+       version=0.11.0
+       state=present
+
+- name: download reference genome
+  get_url:
+    dest: /opt/varda/genome/genome.fa.gz
+    url: "{{ varda_genome }}"
+    sha256sum: "{{ varda_genome_sha256sum }}"
+  sudo_user: varda
+
+- name: decompress reference genome
+  shell: gunzip -c /opt/varda/genome/genome.fa.gz | fastools sanitise - /opt/varda/genome/genome.fa creates=/opt/varda/genome/genome.fa
+  sudo_user: varda
+  notify:
+    - reload varda api
+    - reload varda celery

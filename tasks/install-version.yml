@@ -1,0 +1,29 @@
+---
+- name: install varda requirements
+  pip: requirements=/opt/varda/src/varda/requirements.txt
+       virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
+       state=present
+  sudo_user: varda
+
+- name: install varda
+  pip: name=/opt/varda/src/varda
+       virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
+       state=latest
+  sudo_user: varda
+
+- name: run unit tests
+  command: /opt/varda/versions/{{ varda_current }}/virtualenv/bin/nosetests chdir=/opt/varda/src/varda
+  changed_when: false
+  sudo_user: varda
+  when: varda_unit_tests
+
+# Todo: There might be a bug here. When a migration introduces a new database
+# table, I think it is created by `varda setup` and the actual migration might
+# fail? Need to test this.
+- name: setup varda database
+  shell: "VARDA_SETTINGS=/opt/varda/versions/{{ varda_current }}/conf/settings.py /opt/varda/versions/{{ varda_current }}/virtualenv/bin/varda setup --admin-password '{{ varda_admin_password }}' --alembic-config /opt/varda/src/varda/alembic.ini"
+  sudo_user: varda
+
+- name: migrate varda database
+  shell: "VARDA_SETTINGS=/opt/varda/versions/{{ varda_current }}/conf/settings.py /opt/varda/versions/{{ varda_current }}/virtualenv/bin/alembic -c /opt/varda/src/varda/alembic.ini upgrade head"
+  sudo_user: varda
