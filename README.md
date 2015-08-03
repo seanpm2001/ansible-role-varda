@@ -59,7 +59,7 @@ under `/opt/varda`. Some other Varda related locations are:
 - Varda versions: `/opt/varda/versions/`
 
 
-### Zero-downtime depoloyments
+### Zero-downtime deployments
 
 In order to obtain zero-downtime deployments, we fix and isolate deployment
 versions. A version is identified by its Git commit hash and contains a Python
