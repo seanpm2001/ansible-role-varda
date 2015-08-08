@@ -3,7 +3,7 @@ Description=Varda API ({{ varda_current }})
 After=network.target
 
 [Service]
-ExecStart=/opt/varda/versions/{{ varda_current }}/virtualenv/bin/gunicorn --pid /opt/varda/versions/{{ varda_current }}/run/api.pid -c /opt/varda/versions/{{ varda_current }}/conf/api.conf.py varda:create_reverse_proxied_app()
+ExecStart=/opt/varda/versions/{{ varda_current }}/virtualenv/bin/gunicorn --pid /opt/varda/versions/{{ varda_current }}/run/api.pid -c /opt/varda/versions/{{ varda_current }}/conf/api.conf varda:create_reverse_proxied_app()
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 PIDFile=/opt/varda/versions/{{ varda_current }}/run/api.pid

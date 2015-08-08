@@ -47,7 +47,7 @@
 
 - name: configure varda api
   template: src=api.conf
-            dest=/opt/varda/versions/{{ varda_current }}/conf/api.conf.py
+            dest=/opt/varda/versions/{{ varda_current }}/conf/api.conf
             owner=varda
             group=varda
   notify: reload varda api

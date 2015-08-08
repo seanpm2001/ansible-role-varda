@@ -45,7 +45,7 @@ them):
 
 - Varda configuration: `/opt/varda/versions/*/conf/settings.py`
 - Aulë configuration: `/opt/varda/src/aule/web/scripts/config.coffee`
-- Varda API Gunicorn configuration: `/opt/varda/versions/*/conf/api.conf.py`
+- Varda API Gunicorn configuration: `/opt/varda/versions/*/conf/api.conf`
 - Varda Celery configuration: `/opt/varda/versions/*/conf/celery.conf`
 - nginx configuration: `/etc/nginx/sites-available/varda`
 
