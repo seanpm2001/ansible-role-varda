@@ -1,5 +1,7 @@
 ---
 varda_server_name: localhost
+varda_certificate: localhost-insecure.crt
+varda_certificate_key: localhost-insecure.key
 
 varda_api_proxy_read_timeout: 60
 varda_api_worker_class: sync
@@ -9,6 +11,8 @@ varda_api_timeout: 30
 varda_celery_max_tasks_per_child: 4
 varda_celery_concurrency: 3
 
+varda_database_password: insecure_password
+varda_admin_password: '$2a$12$K5b7FEntllDWUDKqEcYmyu9hJyWWpB.9VTdAWJJW2Y9iOayFFdjui'
 varda_max_upload_size: 1073741824  # 1GB
 varda_genome: null
 varda_genome_sha256sum: null

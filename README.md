@@ -141,19 +141,28 @@ Variables
 
 Also see variables of dependencies.
 
-### `varda_certificate` (required)
+### `varda_certificate`
+
+Default: `localhost-insecure.crt` (self-signed certificate for `localhost`)
 
 SSL certificate file.
 
-### `varda_certificate_key` (required)
+### `varda_certificate_key`
+
+Default: `localhost-insecure.key`
 
 SSL certificate keyfile.
 
-### `varda_database_password` (required)
+### `varda_database_password`
+
+Default: `insecure_password`
 
 Password for the PostgreSQL database user.
 
-### `varda_admin_password` (required)
+### `varda_admin_password`
+
+Default: `$2a$12$K5b7FEntllDWUDKqEcYmyu9hJyWWpB.9VTdAWJJW2Y9iOayFFdjui`
+(hashed `insecure_password`)
 
 Hashed password for the admin user. Can be computed in Python on a machine
 with Varda installed as follows:
