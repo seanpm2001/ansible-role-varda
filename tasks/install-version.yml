@@ -17,9 +17,6 @@
   sudo_user: varda
   when: varda_unit_tests
 
-# Todo: There might be a bug here. When a migration introduces a new database
-# table, I think it is created by `varda setup` and the actual migration might
-# fail? Need to test this.
 - name: setup varda database
   shell: "VARDA_SETTINGS=/opt/varda/versions/{{ varda_current }}/conf/settings.py /opt/varda/versions/{{ varda_current }}/virtualenv/bin/varda setup --admin-password '{{ varda_admin_password }}' --alembic-config /opt/varda/src/varda/alembic.ini"
   sudo_user: varda
