@@ -3,8 +3,8 @@
   apt: pkg=python-pip state=present
 
 - name: install python fastools package
-  pip: name='git+https://git.lumc.nl/j.f.j.laros/fastools.git#egg=fastools'
-       version=0.11.0
+  pip: name=fastools
+       version=0.11.1
        state=present
 
 - name: download reference genome
