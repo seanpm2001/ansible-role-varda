@@ -122,7 +122,7 @@
   wait_for: path=/opt/varda/versions/{{ varda_current }}/run/api.sock state=present timeout=60
 
 - name: test varda api
-  shell: "/bin/echo -e 'GET /api/ HTTP/1.0\\r\nHost: {{ varda_server_name }}\\r\n\\r\n' | nc -U /opt/varda/versions/{{ varda_current }}/run/api.sock"
+  shell: "/bin/echo -n -e 'GET /api/ HTTP/1.0\\r\nHost: {{ varda_server_name }}\\r\n\\r\n' | nc -U /opt/varda/versions/{{ varda_current }}/run/api.sock"
   changed_when: false
   register: varda_test_api_command
 
@@ -158,7 +158,7 @@
 # This request will be last in the pending queue, so when it is handled we
 # know the old Gunicorn instance can safely be stopped.
 - name: wait for pending requests on old api
-  shell: "/bin/echo -e 'GET /api/ HTTP/1.0\\r\nHost: {{ varda_server_name }}\\r\n\\r\n' | nc -U /opt/varda/versions/{{ varda_original }}/run/api.sock"
+  shell: "/bin/echo -n -e 'GET /api/ HTTP/1.0\\r\nHost: {{ varda_server_name }}\\r\n\\r\n' | nc -U /opt/varda/versions/{{ varda_original }}/run/api.sock"
   changed_when: false
   when: varda_original and varda_current != varda_original
 
