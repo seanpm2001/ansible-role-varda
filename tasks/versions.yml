@@ -80,7 +80,7 @@
 
 - name: install python psycopg2 package
   pip: name=psycopg2
-       version=2.5.3
+       version=2.6.1
        virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
        state=present
   sudo_user: varda
