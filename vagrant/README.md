@@ -93,5 +93,7 @@ The self-signed SSL certificate is valid for:
 - 192.168.111.224
 - 127.0.0.1
 
+The Varda admin user has password `dummy_password_in_vagrant`.
+
 Since Varda needs an MTA, Exim is installed and configured for local delivery
 only.
