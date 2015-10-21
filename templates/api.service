@@ -1,6 +1,7 @@
 [Unit]
 Description=Varda API ({{ varda_current }})
 After=network.target
+OnFailure=mail-service-status@%n.service
 
 [Service]
 ExecStart=/opt/varda/versions/{{ varda_current }}/virtualenv/bin/gunicorn --pid /opt/varda/versions/{{ varda_current }}/run/api.pid -c /opt/varda/versions/{{ varda_current }}/conf/api.conf varda:create_reverse_proxied_app()
@@ -11,8 +12,10 @@ WorkingDirectory=/opt/varda/versions/{{ varda_current }}
 Environment=VARDA_SETTINGS=/opt/varda/versions/{{ varda_current }}/conf/settings.py
 User=varda
 Group=varda
-Restart=always
-RestartSec=2s
+Restart=on-failure
+RestartSec=1s
+StartLimitInterval=20s
+StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target

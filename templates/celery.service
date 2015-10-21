@@ -1,6 +1,7 @@
 [Unit]
 Description=Varda celery ({{ varda_current }})
 After=network.target
+OnFailure=mail-service-status@%n.service
 
 [Service]
 ExecStart=/opt/varda/versions/{{ varda_current }}/virtualenv/bin/celery multi start $CELERYD_NODES -A ${CELERY_APP} --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} $CELERYD_OPTS
@@ -11,8 +12,10 @@ WorkingDirectory=/opt/varda/versions/{{ varda_current }}
 EnvironmentFile=-/opt/varda/versions/{{ varda_current }}/conf/celery.conf
 User=varda
 Group=varda
-Restart=always
-RestartSec=2s
+Restart=on-failure
+RestartSec=1s
+StartLimitInterval=20s
+StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target

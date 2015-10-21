@@ -135,6 +135,10 @@ https://git.lumc.nl/humgen-devops/ansible-role-redis
 
 https://git.lumc.nl/humgen-devops/ansible-role-nginx
 
+### `mail-service-status`
+
+https://git.lumc.nl/humgen-devops/ansible-role-mail-service-status
+
 
 Variables
 ---------
