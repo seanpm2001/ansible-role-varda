@@ -12,6 +12,7 @@ EnvironmentFile=-/opt/varda/versions/{{ varda_current }}/conf/celery.conf
 User=varda
 Group=varda
 Restart=always
+RestartSec=2s
 
 [Install]
 WantedBy=multi-user.target

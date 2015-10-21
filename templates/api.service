@@ -12,6 +12,7 @@ Environment=VARDA_SETTINGS=/opt/varda/versions/{{ varda_current }}/conf/settings
 User=varda
 Group=varda
 Restart=always
+RestartSec=2s
 
 [Install]
 WantedBy=multi-user.target
