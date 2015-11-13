@@ -2,6 +2,12 @@ Ansible role for Varda
 ======================
 
 
+This role deploys the database for genomic variation frequencies
+[Varda](https://varda.readthedocs.org/).
+
+New here? Check out [How to use the Varda Ansible role](HOWTO.md).
+
+
 Table of contents
 -----------------
 
