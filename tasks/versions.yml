@@ -94,7 +94,7 @@
 
 - name: install python gunicorn package
   pip: name=gunicorn
-       version=19.3.0
+       version=19.4.1
        virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
        state=present
   sudo_user: varda
