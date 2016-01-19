@@ -17,6 +17,7 @@ varda_max_upload_size: 1073741824  # 1GB
 varda_genome: null
 varda_genome_sha256sum: null
 varda_chromosome_aliases: []
+varda_aule_my_gene_info: null
 
 varda_prune_versions: true
 varda_unit_tests: false
