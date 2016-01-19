@@ -259,6 +259,27 @@ Default: `[]`
 
 Per chromosome, a list of name aliases.
 
+### `varda_aule_my_gene_info`
+
+Default: `null`
+
+[MyGene.info](http://mygene.info/) configuration used for frequency lookup by
+transcript in Aulë. This should be a dictionary with the following fields:
+
+- `species`: Query MyGene.info for transcripts in this organism.
+- `exons_field`: Field name in MyGene.info gene annotation containing a
+  dictionary with coordinate data for each transcript. Coordinates should
+  correspond with the reference genome of the Varda server.
+- `email`: MyGene.info encourages regular users to provide an email, so that
+  they can better track the usage or follow up with you. This field is
+  optional.
+
+Example:
+
+    varda_aule_my_gene_info:
+        species: human
+        exons_field: exons_hg19
+
 ### `varda_prune_versions`
 
 Default: `true`
