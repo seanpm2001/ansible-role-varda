@@ -30,10 +30,45 @@
         state=directory
   with_items:
     - ''
+    - aule
     - data
     - genome
     - versions
     - src
+    - src/aule
+
+# TODO: Better to use the GitHub API and jq to get this URL. But to prevent
+# lockout by rate limiting it should be authenticated.
+- name: get aule distribution url
+  shell: echo -n https://github.com; curl -sL https://github.com/varda/aule-test/releases | grep -oP '(?<=href=")[^"]*dist.tar.gz'
+  register: varda_aule_dist_url
+  changed_when: false
+
+- name: download aule distribution
+  get_url:
+    url: '{{ varda_aule_dist_url.stdout }}'
+    dest: /opt/varda/src/aule/dist.tar.gz
+    force: yes
+  register: varda_aule_dist_download
+
+- name: clean aule distribution
+  file:
+    path: /opt/varda/aule/dist
+    state: absent
+  when: varda_aule_dist_download.changed
+
+- name: extract aule distribution
+  unarchive:
+    src: /opt/varda/src/aule/dist.tar.gz
+    dest: /opt/varda/aule
+    copy: no
+
+- name: configure aule
+  template:
+    src: aule.html
+    dest: /opt/varda/aule/index.html
+    owner: varda
+    group: varda
 
 - name: checkout varda git repository
   git: repo={{ varda_git_repository }}
@@ -42,19 +77,6 @@
        update=yes
   sudo_user: varda
   register: varda_code
-
-- name: checkout aule git repository
-  git: repo={{ varda_aule_git_repository }}
-       dest=/opt/varda/src/aule
-       version={{ varda_aule_git_branch }}
-       update=yes
-  sudo_user: varda
-
-- name: configure aule
-  template: src=aule.conf
-            dest=/opt/varda/src/aule/web/scripts/config.coffee
-            owner=varda
-            group=varda
 
 - name: copy ssl certificate
   copy: src={{ varda_certificate}}
