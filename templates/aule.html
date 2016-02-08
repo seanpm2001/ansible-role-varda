@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Aulë</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aulë, a web interface to the Varda database for genomic variation frequencies">
+    <meta name="author" content="Martijn Vermaat, Leiden University Medical Center">
+    <link rel="stylesheet" href="/aule/dist/styles.css">
+    <script type="text/javascript">
+AULE_CONFIG = {
+  BASE: '/aule/',
+
+  API_ROOT: '/api/',
+
+  PAGE_SIZE: 50,
+
+  MANY_PAGES: 13,
+
+{% if varda_aule_my_gene_info %}
+  MY_GENE_INFO: {
+    species: '{{ varda_aule_my_gene_info.species }}',
+    exons_field: '{{ varda_aule_my_gene_info.exons_field }}',
+    email: '{{ varda_aule_my_gene_info.email }}'
+  }
+{% else %}
+  MY_GENE_INFO: null
+{% endif %}
+};
+    </script>
+    <script type="text/javascript" src="/aule/dist/main.js"></script>
+  </head>
+  <body><p>Please hang on while Aulë is loading...</p></body>
+</html>
