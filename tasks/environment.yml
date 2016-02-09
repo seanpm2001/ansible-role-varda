@@ -40,7 +40,7 @@
 # TODO: Better to use the GitHub API and jq to get this URL. But to prevent
 # lockout by rate limiting it should be authenticated.
 - name: get aule distribution url
-  shell: echo -n https://github.com; curl -sL https://github.com/varda/aule-test/releases | grep -oP '(?<=href=")[^"]*dist.tar.gz'
+  shell: echo -n https://github.com; curl -sL https://github.com/varda/aule/releases | grep -oP '(?<=href=")[^"]*dist.tar.gz'
   register: varda_aule_dist_url
   changed_when: false
 
