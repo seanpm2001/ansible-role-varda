@@ -50,6 +50,7 @@
     url: '{{ varda_aule_dist_url.stdout }}'
     dest: /opt/varda/src/aule/dist.tar.gz
     force: yes
+  sudo_user: varda
   register: varda_aule_dist_download
 
 - name: clean aule distribution
@@ -63,6 +64,8 @@
     src: /opt/varda/src/aule/dist.tar.gz
     dest: /opt/varda/aule
     copy: no
+  sudo_user: varda
+  when: varda_aule_dist_download.changed
 
 - name: configure aule
   template:
