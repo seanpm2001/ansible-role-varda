@@ -2,7 +2,7 @@
 - name: deploy varda
   hosts: varda
   gather_facts: no
-  sudo: yes
+  become: yes
   roles: [exim, varda]
   pre_tasks:
     - name: update apt cache

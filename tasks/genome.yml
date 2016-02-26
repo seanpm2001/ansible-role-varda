@@ -12,11 +12,11 @@
     dest: /opt/varda/genome/genome.fa.gz
     url: "{{ varda_genome }}"
     sha256sum: "{{ varda_genome_sha256sum }}"
-  sudo_user: varda
+  become_user: varda
 
 - name: decompress reference genome
   shell: gunzip -c /opt/varda/genome/genome.fa.gz | fastools sanitise - /opt/varda/genome/genome.fa creates=/opt/varda/genome/genome.fa
-  sudo_user: varda
+  become_user: varda
   notify:
     - reload varda api
     - reload varda celery
