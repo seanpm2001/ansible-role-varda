@@ -8,13 +8,8 @@
 - name: store original version
   set_fact: varda_original={{ varda_original_command.stdout }}
 
-- name: get current version
-  command: git rev-parse --short HEAD chdir=/opt/varda/src/varda
-  changed_when: false
-  register: varda_current_command
-
 - name: store current version
-  set_fact: varda_current={{ varda_current_command.stdout }}
+  set_fact: varda_current={{ varda_git_result.after[:7] }}
 
 - name: create version directories
   file: path=/opt/varda/versions/{{ varda_current }}/{{ item }}
@@ -77,41 +72,41 @@
        version=7.1.2
        virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
        state=present
-  sudo_user: varda
+  become_user: varda
 
 - name: install python ipython package
   pip: name=ipython
        virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
        state=present
-  sudo_user: varda
+  become_user: varda
 
 - name: install python psycopg2 package
   pip: name=psycopg2
        version=2.6.1
        virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
        state=present
-  sudo_user: varda
+  become_user: varda
 
 - name: install python gunicorn package
   pip: name=gunicorn
        version=19.4.5
        virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
        state=present
-  sudo_user: varda
+  become_user: varda
 
 - name: install python setproctitle package
   pip: name=setproctitle
        version=1.1.9
        virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
        state=present
-  sudo_user: varda
+  become_user: varda
 
 - name: install python eventlet package
   pip: name=eventlet
        version=0.17.4
        virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
        state=present
-  sudo_user: varda
+  become_user: varda
   when: varda_api_worker_class == 'eventlet'
 
 - name: install python gevent package
@@ -119,7 +114,7 @@
        version=1.0.2
        virtualenv=/opt/varda/versions/{{ varda_current }}/virtualenv
        state=present
-  sudo_user: varda
+  become_user: varda
   when: varda_api_worker_class == 'gevent'
 
 - include: install-version.yml
@@ -145,7 +140,7 @@
 
 - name: stop and disable old varda celerys
   service: name=varda-celery-{{ item }} state=stopped enabled=no
-  with_items: varda_versions
+  with_items: "{{ varda_versions }}"
   when: item != varda_current
 
 - name: start varda celery
@@ -178,5 +173,5 @@
 
 - name: stop and disable old varda apis
   service: name=varda-api-{{ item }} state=stopped enabled=no
-  with_items: varda_versions
+  with_items: "{{ varda_versions }}"
   when: item != varda_current

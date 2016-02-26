@@ -18,7 +18,7 @@ directory.
 Install Ansible
 ---------------
 
-We need Ansible 1.9.2 or higher.
+We need Ansible 2.0.1 or higher.
 
     pip install ansible
 
@@ -58,7 +58,7 @@ Create a file `playbook.yml` with contents like the following:
 ---
 - name: deploy varda
   hosts: varda
-  sudo: yes
+  become: yes
   roles: [exim, varda]
   pre_tasks:
   - name: update apt cache
@@ -73,7 +73,7 @@ An inventory file is where you define your infrastructure for Ansible. In this
 case, we have just one machine which we call `varda`. In the inventory, we
 define its IP address and the user to login as:
 
-    varda ansible_ssh_host=VARDA_IP ansible_ssh_user=VARDA_USER
+    varda ansible_host=VARDA_IP ansible_user=VARDA_USER
 
 Save this file as `inventory`.
 

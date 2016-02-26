@@ -1,20 +1,20 @@
 ---
 - name: remove old version directories
   file: path=/opt/varda/versions/{{ item }} state=absent
-  with_items: varda_versions
+  with_items: "{{ varda_versions }}"
   when: item != varda_current
 
 - name: remove old nginx configuration for varda
   file: path=/etc/nginx/sites-available/varda-{{ item }} state=absent
-  with_items: varda_versions
+  with_items: "{{ varda_versions }}"
   when: item != varda_current
 
 - name: remove old varda api systemd service
   file: path=/etc/systemd/system/varda-api-{{ item }}.service state=absent
-  with_items: varda_versions
+  with_items: "{{ varda_versions }}"
   when: item != varda_current
 
 - name: remove old varda celery systemd service
   file: path=/etc/systemd/system/varda-celery-{{ item }}.service state=absent
-  with_items: varda_versions
+  with_items: "{{ varda_versions }}"
   when: item != varda_current
