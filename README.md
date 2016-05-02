@@ -139,8 +139,8 @@ Variable overrides:
       - name: varda
         password: "{{ varda_database_password }}"
         attributes: NOSUPERUSER,NOCREATEDB
-        database_privileges:
-          - database: varda
+        databases:
+          - name: varda
             privileges: ALL
 
 ### `redis`
